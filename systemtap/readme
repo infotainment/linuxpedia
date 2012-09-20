@@ -19,3 +19,18 @@ sudo apt-get install -y systemtap
 Where to get debug symbols for kernel X? - check "uname -r" for kernel version
 
 http://ddebs.ubuntu.com/pool/main/l/linux/
+
+
+manual installation
+
+download the following packages
+
+1. systemtap-1.8.tar.gz
+2. elfutils-0.153.tar.bz2
+
+
+Procedure
+
+cd ~/
+
+
