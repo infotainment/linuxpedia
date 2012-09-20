@@ -1,0 +1,21 @@
+SystemTap Setup on Ubuntu-12.04 LTS
+
+SystemTap Introduction:
+
+SystemTap can monitor multiple system-wide synchronous and asynchronous events at the same time. 
+It can do scriptable filtering and statistics collection. 
+It’s a dynamic method of monitoring and tracing the operations of a running Linux kernel.
+
+To instrument the running kernel, SystemTap uses Kprobes and return probes. With kernel debug information, 
+it gets the addresses for functions and variables referenced in the script. 
+With utrace, SystemTap supports probing user-space executables and shared libraries as well. 
+SystemTap is, therefore, useful to systems administrators, kernel developers, support engineers, researchers and students.
+
+
+Installation Infomation:
+
+sudo apt-get install -y systemtap
+
+Where to get debug symbols for kernel X? - check "uname -r" for kernel version
+
+http://ddebs.ubuntu.com/pool/main/l/linux/
