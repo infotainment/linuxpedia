@@ -33,4 +33,21 @@ Procedure
 
 cd ~/
 
+elfutils-0.153.tar.bz2
+
+1. tar -jvxf elfutils-0.153.tar.bz2
+2. cd elfutils
+3. make
+4. sudo make install
+
+systemtap-1.8.tar.gz
+
+1. tar xvf systemtap-1.8.tar.gz
+2. cd systemtap-1.8
+3. make
+4. sudo make install
+
+
+
+
 
