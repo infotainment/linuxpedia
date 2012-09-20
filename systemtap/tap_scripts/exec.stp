@@ -1,0 +1,9 @@
+#Probing a system call
+probe syscall.execve
+{
+    printf ("%s(%d) execve (%s)\n", execname(), pid(), argstr)
+}
+probe syscall.exit
+{
+    printf ("%s(%d) exit (%s)\n", execname(), pid(), argstr)
+}
