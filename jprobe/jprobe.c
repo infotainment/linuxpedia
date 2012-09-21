@@ -6,6 +6,7 @@
 #include<net/ip.h>
 //extern int ip_rcv(struct sk_buff *skb, struct net_device *dev,struct packet_type *pt, struct net_device *orig_dev);
 int my_handler (struct sk_buff *skb,struct net_device *dev,struct packet_type *pt, struct net_device *orig_dev) {
+	printk("inside my_handler\n");
 	struct iphdr *my_iph;
 	u32 S_ip,D_ip;
 	my_iph = ip_hdr(skb);
@@ -13,22 +14,29 @@ int my_handler (struct sk_buff *skb,struct net_device *dev,struct packet_type *p
 	D_ip   = my_iph->daddr;
 //	printk("Source IP: "NIPQUAD_FMT,NIPQUAD(S_ip));
 //	printk("Desti IP: %u\n"NIPQUAD_FMT,NIPQUAD(D_ip));
-	printk("Source IP:%u.%u.%u.%u",((unsigned char *)&S_ip)[0], \
+	printk("Source IP:%u.%u.%u.%u\n",((unsigned char *)&S_ip)[0], \
          ((unsigned char *)&S_ip)[1], \
          ((unsigned char *)&S_ip)[2], \
          ((unsigned char *)&S_ip)[3]);
-		jprobe_return();
+	printk("Dest IP: %u.%u.%u.%u\n",((unsigned char *)&D_ip)[0], \
+	 ((unsigned char *)&D_ip)[1], \
+	 ((unsigned char *)&D_ip)[2], \
+	 ((unsigned char *)&D_ip)[3]);	
+	jprobe_return();
 }
 	
 static struct jprobe my_probe;
 int myinit(void)
 {
-	my_probe.kp.addr = (kprobe_opcode_t *)0xc071c9a9;  /*kp.symbol_name  = "ip_rcv"; */
-	my_probe.entry	 = (kprobe_opcode_t *)my_handler;
-//	my_probe.kp.symbol_name	= "ip_rcv";
-//	my_probe.entry		= *myhandler;
+	printk("module_inserted\n");
+//	my_probe.kp.addr = (kprobe_opcode_t *)0xc071c9a9;  /*kp.symbol_name  = "ip_rcv"; */
+//	my_probe.entry	 = (kprobe_opcode_t *)my_handler;
+	my_probe.kp.symbol_name	= "ip_rcv";
+	my_probe.entry		= *my_handler;
+	printk("registering probe\n");
 	register_jprobe(&my_probe);
-	return 0;
+	printk("register successful");
+	//return 0;
 }
 
 void myexit(void)
