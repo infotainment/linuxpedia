@@ -1,0 +1,9 @@
+-----------------------------------------------------------------------------------------------------------------------
+KPROBE
+-----------------------------------------------------------------------------------------------------------------------
+
+Kprobe is a very simple method to probe the running kernel. 
+At a fundamental level, it requires the address of a kernel function that needs to be debugged. 
+Then, you create pre- and post-handlers that will print a debugging message when the target kernel function is called. 
+(Actually, a handler performs any action specified in its code; in this case, it happens to be printing.) 
+Thus, every time that function is called, you can track it.
