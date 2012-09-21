@@ -21,8 +21,8 @@ int myinit(void)
 	printk("Module Inserted\n ");
 	kp.pre_handler	= Pre_Handler;
 	kp.post_handler = Post_Handler;
-	kp.addr 	= (kprobe_opcode_t *)0xc071c9a9; /*we can use address or symbol name */
-//	kp.symbol_name	= "ip_rcv";
+//	kp.addr 	= (kprobe_opcode_t *)0xc071c9a9; /*we can use address or symbol name */
+	kp.symbol_name	= "ip_rcv";
 	register_kprobe(&kp);
 	return 0;
 }
