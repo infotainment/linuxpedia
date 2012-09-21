@@ -20,6 +20,17 @@ Where to get debug symbols for kernel X? - check "uname -r" for kernel version
 
 http://ddebs.ubuntu.com/pool/main/l/linux/
 
+when you get error mentioned below
+
+semantic error: missing i386 kernel/module debuginfo under '/lib/modules/3.2.0-29-generic-pae/build' while resolving probe point kernel.function("do_execve").call
+semantic error: no match while resolving probe point syscall.execve
+semantic error: missing i386 kernel/module debuginfo under '/lib/modules/3.2.0-29-generic-pae/build' while resolving probe point kernel.function("do_exit").call
+semantic error: no match while resolving probe point syscall.exit
+Pass 2: analysis failed.  Try again with another '--vp 01' option.
+
+
+download the linux debug info kernel from the above link and install it :)
+
 
 manual installation
 
@@ -32,5 +43,22 @@ download the following packages
 Procedure
 
 cd ~/
+
+elfutils-0.153.tar.bz2
+
+1. tar -jvxf elfutils-0.153.tar.bz2
+2. cd elfutils
+3. make
+4. sudo make install
+
+systemtap-1.8.tar.gz
+
+1. tar xvf systemtap-1.8.tar.gz
+2. cd systemtap-1.8
+3. make
+4. sudo make install
+
+
+
 
 
