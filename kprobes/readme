@@ -7,3 +7,87 @@ At a fundamental level, it requires the address of a kernel function that needs 
 Then, you create pre- and post-handlers that will print a debugging message when the target kernel function is called. 
 (Actually, a handler performs any action specified in its code; in this case, it happens to be printing.) 
 Thus, every time that function is called, you can track it.
+
+
+Code walk-through
+
+Here’s an explanation for the less obvious sections of the code.
+struct kprobe kp;
+
+To make use of Kprobe functionality, you must declare a variable of the structure struct kprobe, 
+which is declared in include/linux/kprobes.h. Here’s a little extract:
+struct kprobe {
+    .
+    .
+    kprobe_opcode_t *addr;
+    kprobe_pre_handler_t pre_handler;
+    kprobe_post_handler_t post_handler;
+}
+
+The three members listed above are of interest to us. 
+You need to assign the kernel address of the target function to the addr member; 
+you can retrieve the address from the /proc/kallsyms file, as follows:
+
+# cat /proc/kallsyms | grep ip_rcv
+c071c3e0 t ip_rcv_finish
+c071c9a9 T ip_rcv
+
+Once you’ve found the address, use it in the myinit() function, as follows:
+kp.addr = (kprobe_opcode_t *)0xc071c9a9;
+
+Kprobe executes handler functions before and after the target kernel function is called, 
+and we created the Pre_Handler() and Post_Handler() functions for this purpose. 
+Assign these to their respective pointer members in the Kprobe struct — pre_handler and post_handler — 
+in myinit(), as you can see. 
+Finally, register your Kprobe with the kernel, with register_kprobe(&kp);.
+
+
+
+Then compile the module by running make:
+# make
+make -C /lib/modules/2.6.34/build SUBDIRS=/root/kprobe modules
+make[1]: Entering directory '/root/linux-2.6.34'
+  CC [M]  /root/kprobe/mod1.o
+  Building modules, stage 2.
+  MODPOST 1 modules
+  CC      /root/kprobe/mod1.mod.o
+  LD [M]  /root/kprobe/mod1.ko
+make[1]: Leaving directory '/root/linux-2.6.34'
+
+When done, you are ready to test your example module by inserting it into the kernel:
+
+# insmod mod1.ko
+
+Confirm that the module is successfully inserted:
+# lsmod | head -n 5
+Module                  Size  Used by
+mod1                     904  0
+fuse                   46627  2
+sunrpc                158985  1
+xt_physdev              1355  1
+
+Now, since you have used ip_rcv() as your target function, you need to invoke it with a simple ping:
+# ping localhost
+
+Run dmesg and find your module’s messages:
+module inserted
+Pre_Handler: counter=0
+Post_Handler: counter=1
+Pre_Handler: counter=2
+Post_Handler: counter=3
+
+As you see, you can probe a kernel address and do instrumentation without recompiling the kernel, 
+as was required by the simple printk. 
+When you are done with your debugging, 
+don’t forget to remove the module:
+
+# rmmod mod1
+
+In the exit function, myexit(), Kprobe is unregistered by calling unregister_kprobe(&kp);.
+
+However, Kprobe has limits to what you can do with it. 
+In the above example, you have just printed some messages in the handlers; 
+you cannot access the function’s arguments with Kprobe. 
+Let’s move on to something better.
+
+see more on my github !!
