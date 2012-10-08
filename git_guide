@@ -99,6 +99,24 @@ git branch -d mybranch
 # Deletes the "mybranch" branch
 
 ************************************************************************************************
+************************************************************************************************
+************************************************************************************************
+
+http://effectif.com/git/recovering-lost-git-commits
+
+Recovering from reset
+
+git reflog
+... snip ...
+cf42fa2... HEAD@{84}: checkout: moving to master
+73b9363... HEAD@{85}: commit: Don't symlink to themes on deployment.
+547cc1b... HEAD@{86}: commit: Deploy to effectif.com web server.
+1dc3298... HEAD@{87}: commit: Updated the theme.
+18c3f51... HEAD@{88}: commit: Verify with Google webmaster tools.
+26fbb9c... HEAD@{89}: checkout: moving to effectif
+
+git checkout effectif
+git reset --hard 73b9363
 
 
 
