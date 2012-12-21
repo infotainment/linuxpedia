@@ -1,0 +1,101 @@
+Deep Idle Guide and FAQ
+This was really unexpected. Unfortunately I can't answer all these questions and comments. So I tried to write a guide and a FAQ for deep idle. Feel free for suggestions and corrections. Source: Samsung's SPV210 RISC Microprocessor User's Manual. Hope it clarifies some things.
+
+
+Deep Idle Guide and FAQ
+
+When the phone has no actions to perform, because you leave it alone or for example contacts are not synchronizing or gmail application is not fetching a new mail e.t.c., then the best thing that the phone has to do is to go to... sleep (suspend). In this state the phone consumes very little power.
+
+There are also 5 other power schemes that the processor s5pv210 can use to reduce power consumption: Normal, Idle, Deep Idle, Stop and Deep Stop. We are interested in the first three states Normal, Idle and Deep Idle.
+
+In Normal state the CPU is running, that is, some software is running.
+In Idle state the CPU core is idle, that is, the CPU core clock is disabled but the remaining parts of s5pv210 are running.
+In Deep Idle state the CPU core power is supplied but is powered off by the internal power switch. The remaining parts of processor may become power gated except the Audio power domain for low power MP3 playback. 
+Samsung in gingerbread kernels used only the Idle scheme. Deep Idle was implemented in the kernel but it was disabled by default. All known GB custom kernels have enabled Deep Idle state.
+
+With stock kernels only Normal, Idle and Sleep states are used. Examples of these states use:
+
+Normal state: User uses browser, or reading emails, watching video etc
+Idle state: User listen to music and screen is off, no other software is running.
+Sleep state: No user activity, screen is off, no activity of background services and processes.
+
+Kernel checks many times per second different factors and decides which power state to use.
+Deep Idle can be used as a better alternative of Idle state and the major benefit is when user listen to music. Then IF and only if all other conditions (factors) are satisfied the kernel decides to go to Deep Idle. That is, as we mentioned, CPU powered off, TOP powered off and L2 cache is powered off. Only Audio is on and that's why we have a major benefit. Another option of Deep Idle is the TOP=ON which means that the TOP module is still powered. This is used when bluetooth is enabled (powered).
+
+Regarding power consumption, Sleep is always the desired state. Below the states ordered by the power they consumes (Normal consumes more power):
+
+Normal -> Idle -> Deep Idle (TOP=ON) -> Deep Idle (TOP=OFF) -> Sleep
+
+
+FAQ
+
+How to enable Deep Idle?
+a) Simply check the Deep Idle option in Semaphore Script Manager or b) use this command on a terminal emulator or adb shell:
+echo 1 > /sys/devices/virtual/misc/deepidle/enabled
+
+How to enable Deep Idle Statistics?
+a) Simply check the Deep Idle Statistics option in Semaphore Script Manager or b) use this command on a terminal emulator or adb shell:
+echo 1 > /sys/devices/virtual/misc/deepidle/stats_enabled
+
+Why statistics are not enabled by default? 
+Simply for saving CPU cycles. Kernel checks for entering Deep Idle (or Idle) many thousand times per minute. So, disabling statistics we have less overhead in CPU. What is the difference? Not to much, but better little than nothing.
+
+What is TOP?
+S5PV210 internal modules are grouped into 11 power domains based on their functions. One of these domain is the TOP and it includes these modules: Clock Management Unit (CMU), GPIO(OFF), Bus components, VIC, TZIC, Internal memory (IROM and IRAM), NAND controller, OneNAND controller, CF controller, SRAM controller, Peripheral DMA, Memory DMA, CoreSight, JTAG, Modem interface, Security sub-system, TSI, HSMMC, USB HOST, USB OTG, DRAM controller, CHIPID, IEM_IEC, Security key, SPDIF, PCM, SPI, KEYIF, TSADC, I2C, I2S channel 1 and 2, AC97, PCM, System timer, Watchdog timer, UART.
+So, Deep Idle with TOP=OFF power gates all the above modules.
+
+How to check if Deep Idle works?
+Enable Deep Idle and Deep Idle statistics then run music player and select your favorite music (it must be your favorite song in order to deep idle work properly). Switch the screen off and wait few seconds (or wait until your favorite song is finished). Check with this command in a terminal emulator or adb shell deep idle statistics:
+cat /sys/devices/virtual/misc/deepidle/idle_stats
+
+Alternatively you may just open the idle_stats file in the above directory using a root explorer like application.
+
+I only get TOP=ON statistics
+Bluetooth or GPS or Vibrator is running
+
+How to power down Bluetooth?
+Use this command:
+echo 1 > /sys/devices/platform/bt_rfkill/rfkill/rfkill0/soft
+Unfortunately I didn't manage to find a way to enable it again. I tried an rfkil script but it doesn't work for me. If you find a way, please let me know.
+
+I only get Idle statistics (neither TOP=ON nor TOP=OFF)
+Something is preventing kernel to enter in deep idle state. This maybe normal. For example: 
+LCD controller is enabled
+USB is connected
+TV encoder is working
+G3D (GPU) is active
+MFC (multi format codec) is active
+SDMMC controller is active
+etc.
+
+How can I find what is preventing deep idle?
+That's why I implemented dflags in deep idle. Kernel check many factors to decide if it can enter deep idle. All these check are encoded in dflags. dflags is an integer number. If you read this number and decode it in binary you will get the results of the last check. Each check is a bit set in binary format. For example:
+dflag = 3 binary = 11. This means that LCD controller and camera are active. (Please note that I disabled camera check for preventing kernel entering deep idle). The flags in dflags (most of the are self explanatory):
+0 S5PV210_PD_LCD
+1 S5PV210_PD_CAM
+2 S5PV210_PD_TV
+3 S5PV210_PD_MFC
+4 S5PV210_PD_G3D
+5 SND_S5P_RP
+6 S5P_CLKGATE_IP0
+7 S5P_CLKGATE_IP1
+8 S5P_CLKGATE_IP3
+9 loop_sdmmc_check
+10 check_usbotg_op
+11 check_rtcint
+12 check_idmapos
+
+You may enable debugging with 
+echo 1 > /sys/devices/virtual/misc/deepidle/ddebug_enabled
+
+The you may use this script to get the value of dflags every second.
+
+Code:
+#!/system/xbin/busybox sh
+
+while true; do
+        cat /sys/devices/virtual/misc/deepidle/dflags
+
+        sleep 1
+done
+Leave it to run and try to enter your phone in deep idle. The switch on the screen and read the last values and convert the to binary. Values 0 or 1 lead to deep idle. Other values lead to Idle.
