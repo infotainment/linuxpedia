@@ -1,0 +1,179 @@
+kunen.org
+home OpenGL nve uC links
+Building the GNU ARM Toolchain for Bare Metal
+
+This is a quick guide to building the GCC toolchain for the ARM architecture.  I wrote this to cleanup some other instructions that I've seen floating around the web, and to have instructions that are based of the newest releases of GCC, GDB and Newlib.
+
+This is the build that I use to develop for the Stellaris LM3S1968 (a Cortex M3) processor, which is why I'm building arm-none-eabi.  This compiler sucsessfuly works at building the Luminary Micro LM3S development libraries, FreeRTOS and makes working binares for bare metal (no OS) software.
+
+You are not going to be able to build for much other than bare-metal with this kind of toolchain.  If you want to develop for embedded Linux targets, you're going to have to build against the real GLIBC...  But the whole point here is for small target footprints, either running simple os-free apps, or with some kind of lightweight RTOS... This is why we're going with Newlib.  So keep in mind that while you don't get the "kitchen sink" you still get a very functional toolchain.
+
+For building the GCC toolchain I am using the following:
+
+    An Ubuntu 8.04 host machine with GCC 4.2.4 for my HOST compiler
+    GNU GCC 4.3.3 Sources (for my TARGET compiler)
+    GNU GDB 6.8 Sources
+    GNU binutils 2.19 Sources
+    Jeff Johnston's Newlib 1.17 Sources
+
+ 
+arm-none-eabi
+
+what?  Nobody ever explained this naming convention to me.  So I had to figure that one out myself.  Basically this is what kind of toolchain we're building. It is what is called the Target Alias.  You will see all of your toolchain executables prefixed by this (like arm-none-eabi-gcc, etc.)  This distingues them from the native host compiler, and other target compilers that you may have.  There doesn't seem to be a concrete way that these names are dolled out, rather they follow a rather loose format something like "<architecture>-<something about OS/libraries>-<ABI>"... sometimes 3 tokens, sometimes 4.
+
+Basically, "arm-none-eabi" means:
+
+    'arm' we are building for the ARM architecture (ARM, Thumb, Thumb-2, etc).
+    'none' means we are not building for a specific operating system.  or 'bare-metal'  This is what I wanted because I was developing for a small microcontroller.
+    'eabi' says we're going to use the ARM standard EABI, which describes how binary files (libraries, etc) are stored (the actual file formats), and calling conventions, register usage, etc.  This makes libraries from different parties compatible with each other and your code.  ABI's and EABI's standardize our compiled code.. this is a good thing!  (http://infocenter.arm.com/help/topic/com.arm.doc.ihi0042a/IHI0042A_aapcs...)
+
+some other common ones for arm are:
+
+    arm-none-gnueabi: this is the name as arm-none-eabi (specific to GNU compiler)
+    arm-unknown-eabi: again, the same thing (bare metal)
+    arm-linux-eabi: this is the same, except designed to be used to build programs with glibc under a Linux environment.  This would be an example of what you would use to build programs for an embeded linux ARM device.
+
+ 
+Prerequisites
+
+    You are going to need some disk space (~2 GB should be enough)
+    A fairly decent CPU and amount of memory will help get things done faster, but are not mandatory
+    Recent GCC compiler (I'm using 4.2.4) and GNU build utilities
+    root access, if you intend on installing 'system-wide'.  If you are installing to your user home directory, then this is unnecessary
+    BASH (this is what I use, use whatever shell you like)
+    wget (I use this to grab my files)
+
+ 
+Getting the Source
+
+Keep in mind the package versions I'm using are not only the newest RELEASE versions of these packages, but they are shown to play nice with each other... If you use these versions, it should work for you too.   However, I would recommend that you try the newest releases to be current.  I don't really see there being any issues.  The newest releases of GCC, GDB and binutils should ALWAYS work together.  The newest release of newlib will probably work with them.
+
+Ok, now we're going to setup a working folder.. i'm going to refer to it as ARM... so ARM/src should really be something like /home/yourname/arm/src.
+So go ahead and make the following directories:
+
+# make base dir
+mkdir ARM
+# original archives dir
+mkdir ARM/orig 
+# unpackaged source dir
+mkdir ARM/src
+# path for building the sources (to keep them separate from the original sources)
+mkdir ARM/build
+
+Then figure out where you want your binaries and libraries to get installed to.  I would recommend building to a home directory like /home/yourname/site so that you end up having /home/yourname/site/bin, /home/yourname/site/lib, etc.  This provides a nice clean way to have your own tools and libraries build.  You would just need to add /home/yourname/bin and /home/yourname/sbin to your path.  This is the method I'm assuming your're using (which doesn't require root access).
+
+Create your site path and setup and environment variable to point to it.
+
+mkdir /home/yourname/site
+export MYTOOLS=/home/yourname/site
+
+Download all of the source files with wget, or web browser, etc. (Note: this is about 164MB to download)
+
+# go to our originals path
+cd ARM/orig
+
+# Grab the GNU C Compiler source files
+wget ftp://ftp.gnu.org/gnu/gcc/gcc-4.3.3/gcc-4.3.3.tar.gz
+wget ftp://ftp.gnu.org/gnu/gcc/gcc-4.3.3/gcc-core-4.3.3.tar.gz
+wget ftp://ftp.gnu.org/gnu/gcc/gcc-4.3.3/gcc-g++-4.3.3.tar.gz 
+
+# Grab the GNU Debugger source files
+wget ftp://ftp.gnu.org/gnu/gdb/gdb-6.8.tar.gz
+
+# Grab the GNU binutils source files
+wget ftp://ftp.gnu.org/gnu/binutils/binutils-2.19.tar.gz
+
+# Grab the Newlib source files
+wget ftp://sources.redhat.com/pub/newlib/newlib-1.17.0.tar.gz
+
+Now we are going to unpack all of these files (Takes another 630MB of space)
+
+# Goto our source path
+cd ARM/src
+
+# unpack the source archives
+tar xzvf ../orig/gcc-4.3.3.tar.gz
+tar xzvf ../orig/gcc-core-4.3.3.tar.gz
+tar xzvf ../orig/gcc-g++-4.3.3.tar.gz
+tar xzvf ../orig/gdb-6.8.tar.gz
+tar xzvf ../orig/binutils-2.19.tar.gz
+tar xzvf ../orig/newlib-1.17.0.tar.gz
+
+That's it, we're now ready to build our ARM toolchain.
+
+ 
+Building the toolchain
+
+Building the toolchain is pretty simple.  It is more a matter of know the correct order in which to build it, and what options are needed to get a working compiler.  I will try and explain the order and the options that we're using as we go.
+
+First we need to get the binutils built.  This will provide us with lots of useful tools needed in building ARM libraries and binaries (like objdump, ld, ranlib, etc.)
+
+mkdir ARM/build/binutils-2.19
+cd ARM/build/binutils-2.19
+../../src/binutils-2.19/configure --target=arm-none-eabi --prefix=$MYTOOLS --enable-interwork --enable-multilib
+make all install
+export PATH="$PATH:$MYTOOLS/bin"
+
+You will notice a few configure options that are really critical for getting things to work properly.
+
+    --target=arm-none-eabi  Says we want a compiler to generate binaries for the arm-none-eabi platform.
+    --enable-interwork  This allows for assembling Thumb and ARM code mixed into the same binaries (for those chips that support that)
+    --enable-multilib  Multilib allows the use of libraries that are compiled multiple times for different targets/build types (see
+    --prefix=$MYTOOLS
+
+Next, we build the GCC compiler (but not the entire GCC package!)
+
+mkdir ARM/build/gcc-4.3.3
+cd ARM/build/gcc-4.3.3
+../../src/gcc-4.3.3/configure --target=arm-none-eabi --prefix=$MYTOOLS --enable-interwork --enable-multilib --enable-languages="c,c++" \
+        --with-newlib --with-headers=../../src/newlib-1.16.0/newlib/libc/include 
+make all-gcc install-gcc
+
+A couple of new options appear here:
+
+    --enable-languages="c,c++"  This tells configure to only setup building C and C++ since the GCC package contains numerous other languages.
+    --with-newlib  This says we're going to use Newlib instead of the standard C libraries.
+    --with-headers  This adds a header inlude path during build time and will allow the build to find the newlib header files
+
+Now build Newlib using our new cross-compiler
+
+mkdir ARM/build/newlib-1.17.0
+cd ARM/build/newlib-1.17.0
+../../src/newlib-1.17.0/configure --target=arm-none-eabi --prefix=$MYTOOLS --enable-interwork --enable-multilib
+make all install
+
+Now that we have our runtime libraries, go back and finish the GCC build:
+
+cd ARM/build/gcc-4.3.3
+make all install
+
+Okay, now we can build GDB:
+
+mkdir ARM/build/gdb-6.8
+cd ARM/build/gdb-6.8
+../../src/gdb-6.8/configure --target=arm-none-eabi --prefix=$MYTOOLS --enable-interwork --enable-multilib
+make all install
+
+OK.
+
+That's it!  You should now have an operational ARM toolchain.
+
+ 
+References
+
+ 
+
+http://gcc.gnu.org/
+
+http://www.gnu.org/software/gdb/
+
+http://www.gnu.org/software/binutils/
+
+http://www.gnuarm.com/
+
+http://ymorin.is-a-geek.org/dokuwiki/projects/crosstool
+
+(c)2010 by adam j kunen, all rights reserved
+
+contact: adam at kunen dot org
+
