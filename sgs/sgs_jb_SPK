@@ -1,0 +1,167 @@
+How to use Semaphore JB
+	 
+Semaphore JB is built for Android 4.1.x Jelly Bean ROMs.
+
+Semaphore Manager app can handle most of Semaphore's features. Within the app you may enable specific functionality, configure kernel parameters or load the various modules. All these features may also handled through init.d scripts that are located in /res/scripts directory. Scripts can be handled also by HM.Carbide's Semaphore Script Manager app. 
+
+Below, most of the features of Semaphore kernel.
+
+ 
+
+LiveOC
+
+LiveOC was initially developed by Ezekeel. It is used to overclock the CPU. The difference from "normal" OC is that LiveOC overclocks all CPU frequency steps and bus frequency. 
+
+In SGS, the stock CPU frequency steps are 100, 200, 400, 800, 1000 MHz. Applying LiveOC you specify the overclocking in percent of the stock frequency. For example, if you apply LiveOC 110, the frequencies of CPU will be: 110, 220, 440, 880, 1100 MHz.
+
+Valid value: 100-120%, default: 100 (no OC)
+
+ 
+
+Governors
+
+Governors in Linux kernel handle the frequency of the CPU according to it's load. They measure the CPU load many times per second and they adjust the frequency. In Semaphore 6 governors are implemented. Ondemand, Conservative, Smartassv2, Interactive, Performance and Powersave. Ondemand, Conservative, Performance and Powersave are included in the mainline Linux kernel and they widely used (mostly Ondemand) in every Linux system. Interactive was implemented for Android and Smartassv2 from erasmux (XDA developer). Performance and Powersave are special governors because actually don't change the CPU frequency during time. Performance keeps the CPU to it's maximum available frequency and Powersave to minimum available frequency.
+
+Conservative, Smartassv2 and Interactive are built as modules while Ondemand, Performance and Powersave are built into the kernel.
+
+There are many tunables in each governor that they fine tune the governor's behavior.
+
+Default: Ondemand
+
+ 
+
+Deep Idle
+
+Deep Idle is a CPU power scheme that is used to leave active only the audio power domain in CPU. All other CPU power domains are suspended for battery efficiency. You may also enable Deep Idle statistics and Deep Idle Debug option in Semaphore. Although Deep Idle can save you much battery when you listen to music, there are reports that may cause issues when the device tries to recover from Deep Idle (SoD).
+
+For more information about Deep Idle please read Deep Idle Guide.
+
+Default: Disabled.
+
+ 
+
+Lock minimum CPU frequency to 100MHz.
+
+When the GPU is active the CPU needs to be clocked to 200MHz. The kernel temporarily sets the minimum scaling frequency to 200MHz and reverts it back to 100MHz when the GPU is deactivated. Some apps wrongly display that the CPU minimum scaling frequency is 200MHz, because when they read this value, the GPU was active. Applying other performance settings, they apply the minimum scaling frequency to 200MHz as if it was user's selection. This feature locks the ability of changing the minimum scaling frequency from an app or ROM. After applying this, only the kernel itself may change this value.
+
+Default: Disabled.
+
+ 
+
+Schedulers
+
+Schedulers handle the I/O kernel operations to storage. In Semaphore 4 schedulers are implemented: No-op, CFQ (Completely Fair Queuing), Deadline, SIO (Simple I/O). The first 3 are included in mainline Linux kernel. No-op is the simplest one and SIO (developed by Miguel Boton) considered a simple form of CFQ.
+
+CFQ, Deadline, SIO are built as modules.
+
+Default: No-op.
+
+ 
+
+Semaphore Auto Brightness
+
+Semaphore Auto Brightness is a virtual driver developed by myself to handle the screen brightness at kernel level. Display brightness must be in auto from ROM's settings in order the driver can work properly. The driver's behavior can be handled through tunables and there are 3 profiles available in Semaphore Manager app: Bright, Normal and Dark. More info about this driver here.
+
+It's compiled as module.
+
+Default: Disabled.
+
+ 
+
+Touch wake
+
+Touch wake was developed by Ezekeel. When enabled, kernel uses a wakelock to keep the device awake for X milliseconds after the screen goes off. Within this period of time, user can touch the screen and activate the phone. The delay is adjustable from 0 to 90000ms (90sec). After this delay, kernel release the lock and the device goes to deep sleep mode. It's a useful feature to extend the period that the phone is awake, keeping the screen off.
+
+Default: Disabled
+
+ 
+
+Vibrator
+
+This option simply handles the vibration intensity of the phone. 
+
+Valid values: 0 - 100 (strong)
+
+Default: 100
+
+ 
+
+Bigmem
+
+When the kernel boots, it reserves some RAM to be used by some drivers (video, capture, JPG) for DMA (Direct Memory Access). In Linux kernel this reservation have to be done only during boot. It was found that using less reserved memory for video capture, the kernel can operate normally without issue with the only regretion that 720p video recording is not possible. Enabling this option will leave ~13MB more available RAM. 
+
+Phone must be rebooted to enable this feature. After the device powers down the information about this option is lost and you have to reboot the phone again.
+
+Default: Disabled
+
+ 
+
+WiFi PM_FAST
+
+WiFi driver have 2 different modes of operation. PM_MAX (saves battery) and PM_FAST (better performance). When the screen goes off PM_MAX is used by default. When screen on PM_FAST is used. You may select the PM_FAST option in Semaphore Manager if you want to have PM_FAST on both cases.
+
+Default: Disabled (PM_MAX when screen off)
+
+ 
+
+Fast charge support
+
+Fast charge makes the device to pull max current from USB and it charges faster. Although that it might be risky (thus the warning message), nobody reported issues so far. Please note that selecting this option does not enable the feature itself. It just enable support for fast charge. You need to enable explicitly from your ROM settings (or a widget).
+
+Default: Disabled
+
+ 
+
+SD Card read ahead
+
+It handles the cache that will be used for reading operation from SD. Possible values 128KB, 256KB, 512KB, 1024KB, 3072KB. A large value may speed up the reading process, but it may lead to overhead and/or loading unnecessary data.
+
+Default: 128KB
+
+ 
+
+Logger
+
+Logger is the logging mechanism in Android. Framework and every app is using logger for informational or debugging messages. Very useful to developers, useless to average user. It's compiled as module in Semaphore and it's unloaded by default for more smooth system.
+
+Default: Disabled.
+
+ 
+
+TUN
+
+TUN is a module that is required for VPN connections.
+
+Default: Disabled
+
+ 
+
+CIFS
+
+CIFS (Common Internet File System) protocol is used to mount shared folder usually of Windows machines. The mounted folder may be accessed from the phone as a local directory. After loading this module you can handle mounting using application from Market as CIFS manager and Mount Manager.
+
+Default: Disabled.
+
+ 
+
+config.gz
+
+This module enables a virtual system file /proc/configgz. Reading this file gives you info about the kernel configuration. It maybe useful for developers or apps like Linux installer.
+
+Default: Disabled.
+
+ 
+
+Radio FM
+
+A module that is used to enable FM radio support to ICS/JB ROMs. There is no stock app for FM radio support and SpiritFM app have to be used (Please read the warnings for this app about speaker damages)
+
+Default: Disabled.
+
+ 
+
+USB host
+
+sztupy (XDA recognized developer) back ported USB host feature from SGSII kernel. USB host is enabled and handled through USB host controller app (Google Play). Mouse and X-Box pad capabilities are compiled as modules in Semaphore kernel.
+
+Default: Disabled
