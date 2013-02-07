@@ -1,0 +1,7 @@
+I'm not sure, but seems you forgot to use:
+. ./setup-environment build
+before:
+bitbake fsl-gui-image
+
+
+
