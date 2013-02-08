@@ -2,6 +2,8 @@ I'm not sure, but seems you forgot to use:
 . ./setup-environment build
 before:
 bitbake fsl-gui-image
+for (https://github.com/Freescale/fsl-community-bsp-platform)
 
 
 
+https://wiki.yoctoproject.org/wiki/Working_Behind_a_Network_Proxy
