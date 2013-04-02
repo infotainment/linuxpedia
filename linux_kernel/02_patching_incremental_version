@@ -1,0 +1,46 @@
+
+
+tar xvf linux-stable-3.8.4.tar.gz  /* Download from kernel.org */ https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/snapshot/linux-stable-3.8.4.tar.gz
+tar xvf linux-stable-3.8.5.tar.gz  /* https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/snapshot/linux-stable-3.8.5.tar.gz */
+
+
+patch-3.8.4-5.xz                  /* https://www.kernel.org/pub/linux/kernel/v3.0/incr/patch-3.8.4-5.xz */
+
+
+
+
+xz -d patch-3.8.4-5.xz
+
+
+
+cd linux-stable-3.8.4/
+
+
+
+patch -p1 < ../patch-3.8.4-5
+
+
+
+tar xvf linux-stable-3.8.5.tar.gz
+
+
+diff -rupN linux-stable-3.8.4 linux-stable-3.8.4
+
+
+
+mv linux-stable-3.8.4 linux-stable-3.8.4-5
+
+
+tar -xvf linux-stable-3.8.4.tar.gz
+
+
+diff -rupN linux-stable-3.8.4 linux-stable-3.8.5
+
+diff -rupN linux-stable-3.8.4 linux-stable-3.8.4-5
+
+
+diff -rupN linux-stable-3.8.4 linux-stable-3.8.4-5 > gokul1.patch
+
+diff -rupN linux-stable-3.8.4 linux-stable-3.8.5 > gokul2.patch
+
+diff gokul1.patch gokul2.patch
