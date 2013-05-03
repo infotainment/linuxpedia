@@ -1,0 +1,24 @@
+1: Get Root ( if you have it then skip this)
+2: Get a Rootbrowser https://play.google.com/store/apps/d...93c2VyZnJlZSJd
+3: Go to /System
+4: Open Build.prop (make a backup from it just in case)
+5: Add at the end: qemu.hw.mainkeys=0
+6: Save and reboot 
+
+
+http://forum.xda-developers.com/showthread.php?t=1832638
+
+
+
+http://lwn.net/Articles/365835/
+Debugging the kernel using Ftrace - part 1
+
+http://lwn.net/Articles/366796/
+Debugging the kernel using Ftrace - part 2
+
+https://lwn.net/Articles/410200/
+trace-cmd: A front-end for Ftrace
+
+http://lwn.net/Articles/425583/
+Using KernelShark to analyze the real-time scheduler
+
