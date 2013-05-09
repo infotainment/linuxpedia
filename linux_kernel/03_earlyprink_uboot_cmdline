@@ -1,0 +1,116 @@
+Hi,
+1. I am trying to setup the development environment for an New Board that contains (LPC3250) ARM9 controller,SDRAM(MT48LC32M16A2P) with memory size of 512Mbits and NAND FLASH.when I tried to cross-compile the kernel and load it on the board(inNAND FLASH),the console showing the message
+
+Uncompressing Linux... done, booting the kernel
+
+2.I thought that may be a problem in SDRAM configuration or initialization.so,i have changed the settings of SDRAM in dramconfig.h file.
+
+Then also it is showing the same problem.
+After that i follow the below steps
+A. Enabling Kernel Low Level Debugging ( CONFIG_DEBUG_LL )
+
+1. In menuconfig search for 'Kernel Low Level Debugging'. ( To search in menuconfig: after make ARCH=.. CROSS_COMPILE=... menuconfig, press '/' sign.
+A dialouge box will appear. Type the string to be searched and press enter.)
+
+2. This will show where the low level debugging option is and by what name will it be represented. Note down the path and also check all the dependencies.
+
+3. Press EXIT. Select all the dependencies and the low level debugging option.
+
+4. Save the configuration and exit.
+
+Do not build the kernel Image (uImage) yet.
+
+B. Using early printks:
+
+1. In your kernel source open kernel/printk.c using vim editor ( or any editor you prefer ). Add 'printascii' to the function vprintk in the following manner:
+
+extern void printascii(const char*);
+
+asmlinkage int vprintk(const char *fmt, va_list args)
+{
+int printed_len = 0;
+int current_log_level = default_message_loglevel;
+unsigned long flags;
+int this_cpu;
+char *p;
+
+.
+.
+.
+.
+
+/* Emit the output into the temporary buffer */
+printed_len += vscnprintf(printk_buf + printed_len,
+sizeof(printk_buf) - printed_len, fmt, args);
+
+printascii(printk_buf);
+
+/*
+* Copy the output into log_buf. If the caller didn't provide
+* appropriate log level tags, we insert them here
+*/
+for (p = printk_buf; *p; p++) {
+if (new_text_line) {
+/* If a token, set current_log_level and skip over */
+if (p[0] == '<' && p[1] >= '0' && p[1] <= '7' &&
+p[2] == '>') {
+current_log_level = p[1] - '0';
+p += 3;
+printed_len -= 3;
+}
+
+.
+.
+.
+
+2. Save the file and exit. ( in vim press 'Esc' and the ':wq' and then 'Enter' to save and exit. )
+
+3. Now build the kernel image. ( uImage )
+
+4. On the u-boot prompt give the following command:
+
+$ setenv bootargs $(bootargs) earlyprintk=serial
+
+or simple add 'earlyprintk=serial' to the bootargs.
+
+C. Save if desired and boot with the uImage formed above. You will get the prints even if the console is not initialized.
+Then the console has displayed the message
+
+Uncompressing Linux... done, booting the kernel.
+<5>Linux version 2.6.34 (root@biyabani) (gcc version 4.2.2) #5 PREEMPT Wed Feb 3
+CPU: ARM926EJ-S [41069264] revision 4 (ARMv5TEJ), cr=00053177
+CPU: VIVT data cache, VIVT instruction cache
+Machine: Future Designs board with the LPC3250 Microcontroller
+Memory policy: ECC disabled, Data cache writeback
+<7>On node 0 totalpages: 8192
+<7>free_area_init_node: node 0, pgdat c0373fa0, node_mem_map c0393000
+<7> Normal zone: 64 pages used for memmap
+<7> Normal zone: 0 pages reserved
+<7> Normal zone: 8128 pages, LIFO batch:0
+Built 1 zonelists in Zone order, mobility grouping on. Total pages: 8128
+<5>Kernel command line: console=ttyTX0,115200n8 root=/dev/ram0 rw ip=192.168.1.0
+<6>PID hash table entries: 128 (order: -3, 512 bytes)
+<6>Dentry cache hash table entries: 4096 (order: 2, 16384 bytes)
+<6>Inode-cache hash table entries: 2048 (order: 1, 8192 bytes)
+<6>Memory: 32MB = 32MB total
+<5>Memory: 27188k/27188k available, 5580k reserved, 0K highmem
+<5>Virtual kernel memory layout:
+vector : 0xffff0000 - 0xffff1000 ( 4 kB)
+fixmap : 0xfff00000 - 0xfffe0000 ( 896 kB)
+DMA : 0xffc00000 - 0xffe00000 ( 2 MB)
+vmalloc : 0xc2800000 - 0xf0000000 ( 728 MB)
+lowmem : 0xc0000000 - 0xc2000000 ( 32 MB)
+modules : 0xbf000000 - 0xc0000000 ( 16 MB)
+.init : 0xc0008000 - 0xc0027000 ( 124 kB)
+.text : 0xc0027000 - 0xc0358000 (3268 kB)
+.data : 0xc0358000 - 0xc03745a0 ( 114 kB)
+<6>Hierarchical RCU implementation.
+<6>NR_IRQS:96
+Console: colour dummy device 80x30
+<6>Calibrating delay loop... 133.12 BogoMIPS (lpj=665600)
+Mount-cache hash table entries: 512
+<6>CPU: Testing write buffer coherency: ok
+<6>NET: Registered protocol family 16
+I did not understood anything from above message...
+please if anybody know what is the problem then post it.
+thank you 
