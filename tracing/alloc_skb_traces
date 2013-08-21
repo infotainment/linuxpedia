@@ -1,0 +1,13 @@
+ 2065  sudo ./ktap -e 'trace "ftrace:function /ip==skb*/" function (e) { print(e) }'
+ 2066  sudo ./ktap -e 'trace "ftrace:function /ip==__alloc_skb*/" function (e) { print(e) }'
+ 2067  sudo ./ktap -e 'trace "ftrace:function /ip==sock_alloc_send_pskb*/" function (e) { print(e) }'
+ 2068  sudo ./ktap -e 'trace "ftrace:function /ip==sock_alloc_send_skb*/" function (e) { print(e) }'
+ 2069  sudo ./ktap -e 'trace "ftrace:function /ip==unix_stream_sendmsg*/" function (e) { print(e) }'
+ 2070  sudo ./ktap -e 'trace "ftrace:function /ip==sock_aio_write*/" function (e) { print(e) }'
+ 2071  #do_sync_readv_writev
+ 2072  sudo ./ktap -e 'trace "ftrace:function /ip==do_sync_readv_writev*/" function (e) { print(e) }'
+ 2073  sudo ./ktap -e 'trace "ftrace:function /ip==do_readv_writev*/" function (e) { print(e) }'
+ 2074  sudo ./ktap -e 'trace "ftrace:function /ip==do_sync_readv_writev*/" function (e) { print(e) }'
+ 2075  sudo ./ktap -e 'trace "ftrace:function /ip==do_readv_writev*/" function (e) { print(e) }'
+ 2076  sudo ./ktap -e 'trace "ftrace:function /ip==vfs_writev*/" function (e) { print(e) }'
+ 2077  sudo ./ktap -e 'trace "ftrace:function /ip==SyS_writev*/" function (e) { print(e) }'
