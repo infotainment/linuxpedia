@@ -1,0 +1,9 @@
+To have more control over the device numbers and the device creation you could do the following steps (instead of register_chrdev()):
+
+    Call alloc_chrdev_region() to get a major number and a range of minor numbers to work with.
+    Create device class for your devices with class_create().
+    For each device, call cdev_init() and cdev_add() to add the character device to the system.
+    For each device, call device_create(). As a result, among other things, Udev will create device nodes for your devices. No need for mknod or the like. device_create() also allows you to control the names of the devices.
+
+There are probably many examples of this on the Net, one of them is here: http://hg.berlios.de/repos/kedr/file/b0f4d9d02d35/sources/examples/sample_target/cfake.c
+

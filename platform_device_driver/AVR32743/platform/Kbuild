@@ -1,0 +1,2 @@
+obj-m		+= platform_driver.o
+obj-m		+= platform_test.o
