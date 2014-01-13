@@ -1,0 +1,288 @@
+
+sleep.ko:     file format elf32-i386
+
+
+Disassembly of section .text:
+
+00000000 <module_input>:
+   0:	55                   	push   %ebp
+   1:	31 c0                	xor    %eax,%eax
+   3:	89 e5                	mov    %esp,%ebp
+   5:	56                   	push   %esi
+   6:	89 ce                	mov    %ecx,%esi
+   8:	31 c9                	xor    %ecx,%ecx
+   a:	85 f6                	test   %esi,%esi
+   c:	53                   	push   %ebx
+   d:	89 d3                	mov    %edx,%ebx
+   f:	74 1f                	je     30 <module_input+0x30>
+  11:	8d b4 26 00 00 00 00 	lea    0x0(%esi,%eiz,1),%esi
+  18:	8d 04 03             	lea    (%ebx,%eax,1),%eax
+  1b:	e8 fc ff ff ff       	call   1c <module_input+0x1c>
+  20:	88 91 20 00 00 00    	mov    %dl,0x20(%ecx)
+  26:	83 c1 01             	add    $0x1,%ecx
+  29:	83 f9 4e             	cmp    $0x4e,%ecx
+  2c:	89 c8                	mov    %ecx,%eax
+  2e:	7e 10                	jle    40 <module_input+0x40>
+  30:	89 c8                	mov    %ecx,%eax
+  32:	5b                   	pop    %ebx
+  33:	c6 81 20 00 00 00 00 	movb   $0x0,0x20(%ecx)
+  3a:	5e                   	pop    %esi
+  3b:	5d                   	pop    %ebp
+  3c:	c3                   	ret    
+  3d:	8d 76 00             	lea    0x0(%esi),%esi
+  40:	39 ce                	cmp    %ecx,%esi
+  42:	77 d4                	ja     18 <module_input+0x18>
+  44:	89 c8                	mov    %ecx,%eax
+  46:	5b                   	pop    %ebx
+  47:	c6 81 20 00 00 00 00 	movb   $0x0,0x20(%ecx)
+  4e:	5e                   	pop    %esi
+  4f:	5d                   	pop    %ebp
+  50:	c3                   	ret    
+  51:	eb 0d                	jmp    60 <module_permission>
+  53:	90                   	nop    
+  54:	90                   	nop    
+  55:	90                   	nop    
+  56:	90                   	nop    
+  57:	90                   	nop    
+  58:	90                   	nop    
+  59:	90                   	nop    
+  5a:	90                   	nop    
+  5b:	90                   	nop    
+  5c:	90                   	nop    
+  5d:	90                   	nop    
+  5e:	90                   	nop    
+  5f:	90                   	nop    
+
+00000060 <module_permission>:
+  60:	55                   	push   %ebp
+  61:	83 fa 04             	cmp    $0x4,%edx
+  64:	89 e5                	mov    %esp,%ebp
+  66:	74 20                	je     88 <module_permission+0x28>
+  68:	83 fa 02             	cmp    $0x2,%edx
+  6b:	75 10                	jne    7d <module_permission+0x1d>
+  6d:	64 a1 00 00 00 00    	mov    %fs:0x0,%eax
+  73:	8b 80 c4 02 00 00    	mov    0x2c4(%eax),%eax
+  79:	85 c0                	test   %eax,%eax
+  7b:	74 0b                	je     88 <module_permission+0x28>
+  7d:	b8 f3 ff ff ff       	mov    $0xfffffff3,%eax
+  82:	5d                   	pop    %ebp
+  83:	c3                   	ret    
+  84:	8d 74 26 00          	lea    0x0(%esi,%eiz,1),%esi
+  88:	31 c0                	xor    %eax,%eax
+  8a:	5d                   	pop    %ebp
+  8b:	c3                   	ret    
+  8c:	8d 74 26 00          	lea    0x0(%esi,%eiz,1),%esi
+
+00000090 <cleanup_module>:
+  90:	55                   	push   %ebp
+  91:	31 d2                	xor    %edx,%edx
+  93:	89 e5                	mov    %esp,%ebp
+  95:	b8 00 00 00 00       	mov    $0x0,%eax
+  9a:	83 ec 04             	sub    $0x4,%esp
+  9d:	e8 fc ff ff ff       	call   9e <cleanup_module+0xe>
+  a2:	c7 04 24 06 00 00 00 	movl   $0x6,(%esp)
+  a9:	e8 fc ff ff ff       	call   aa <cleanup_module+0x1a>
+  ae:	c9                   	leave  
+  af:	c3                   	ret    
+
+000000b0 <init_module>:
+  b0:	55                   	push   %ebp
+  b1:	31 c9                	xor    %ecx,%ecx
+  b3:	89 e5                	mov    %esp,%ebp
+  b5:	ba a4 01 00 00       	mov    $0x1a4,%edx
+  ba:	83 ec 04             	sub    $0x4,%esp
+  bd:	b8 00 00 00 00       	mov    $0x0,%eax
+  c2:	e8 fc ff ff ff       	call   c3 <init_module+0x13>
+  c7:	85 c0                	test   %eax,%eax
+  c9:	a3 70 00 00 00       	mov    %eax,0x70
+  ce:	75 1f                	jne    ef <init_module+0x3f>
+  d0:	31 d2                	xor    %edx,%edx
+  d2:	b8 00 00 00 00       	mov    $0x0,%eax
+  d7:	e8 fc ff ff ff       	call   d8 <init_module+0x28>
+  dc:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+  e3:	e8 fc ff ff ff       	call   e4 <init_module+0x34>
+  e8:	b8 f4 ff ff ff       	mov    $0xfffffff4,%eax
+  ed:	c9                   	leave  
+  ee:	c3                   	ret    
+  ef:	c7 40 28 00 00 00 00 	movl   $0x0,0x28(%eax)
+  f6:	c7 40 20 20 00 00 00 	movl   $0x20,0x20(%eax)
+  fd:	c7 40 24 80 00 00 00 	movl   $0x80,0x24(%eax)
+ 104:	66 c7 40 0c a4 81    	movw   $0x81a4,0xc(%eax)
+ 10a:	c7 40 10 00 00 00 00 	movl   $0x0,0x10(%eax)
+ 111:	c7 40 14 00 00 00 00 	movl   $0x0,0x14(%eax)
+ 118:	c7 40 18 50 00 00 00 	movl   $0x50,0x18(%eax)
+ 11f:	c7 40 1c 00 00 00 00 	movl   $0x0,0x1c(%eax)
+ 126:	c7 04 24 1d 00 00 00 	movl   $0x1d,(%esp)
+ 12d:	e8 fc ff ff ff       	call   12e <init_module+0x7e>
+ 132:	31 c0                	xor    %eax,%eax
+ 134:	c9                   	leave  
+ 135:	c3                   	ret    
+ 136:	8d 76 00             	lea    0x0(%esi),%esi
+ 139:	8d bc 27 00 00 00 00 	lea    0x0(%edi,%eiz,1),%edi
+
+00000140 <module_open>:
+ 140:	55                   	push   %ebp
+ 141:	89 e5                	mov    %esp,%ebp
+ 143:	57                   	push   %edi
+ 144:	56                   	push   %esi
+ 145:	53                   	push   %ebx
+ 146:	83 ec 14             	sub    $0x14,%esp
+ 149:	f6 42 1d 08          	testb  $0x8,0x1d(%edx)
+ 14d:	0f 85 f5 00 00 00    	jne    248 <module_open+0x108>
+ 153:	64 a1 00 00 00 00    	mov    %fs:0x0,%eax
+ 159:	83 3d 00 00 00 00 02 	cmpl   $0x2,0x0
+ 160:	74 0e                	je     170 <module_open+0x30>
+ 162:	83 c0 03             	add    $0x3,%eax
+ 165:	c1 e0 07             	shl    $0x7,%eax
+ 168:	ff 80 00 00 00 00    	incl   0x0(%eax)
+ 16e:	66 90                	xchg   %ax,%ax
+ 170:	8b 15 00 00 00 00    	mov    0x0,%edx
+ 176:	85 d2                	test   %edx,%edx
+ 178:	0f 84 b6 00 00 00    	je     234 <module_open+0xf4>
+ 17e:	64 a1 00 00 00 00    	mov    %fs:0x0,%eax
+ 184:	89 45 e4             	mov    %eax,-0x1c(%ebp)
+ 187:	8d 45 ec             	lea    -0x14(%ebp),%eax
+ 18a:	c7 45 e0 00 00 00 00 	movl   $0x0,-0x20(%ebp)
+ 191:	c7 45 e8 00 00 00 00 	movl   $0x0,-0x18(%ebp)
+ 198:	89 45 ec             	mov    %eax,-0x14(%ebp)
+ 19b:	89 45 f0             	mov    %eax,-0x10(%ebp)
+ 19e:	eb 14                	jmp    1b4 <module_open+0x74>
+ 1a0:	64 a1 00 00 00 00    	mov    %fs:0x0,%eax
+ 1a6:	8b 40 04             	mov    0x4(%eax),%eax
+ 1a9:	f6 40 08 04          	testb  $0x4,0x8(%eax)
+ 1ad:	75 21                	jne    1d0 <module_open+0x90>
+ 1af:	e8 fc ff ff ff       	call   1b0 <module_open+0x70>
+ 1b4:	b9 01 00 00 00       	mov    $0x1,%ecx
+ 1b9:	b8 00 00 00 00       	mov    $0x0,%eax
+ 1be:	8d 55 e0             	lea    -0x20(%ebp),%edx
+ 1c1:	e8 fc ff ff ff       	call   1c2 <module_open+0x82>
+ 1c6:	8b 0d 00 00 00 00    	mov    0x0,%ecx
+ 1cc:	85 c9                	test   %ecx,%ecx
+ 1ce:	75 d0                	jne    1a0 <module_open+0x60>
+ 1d0:	8d 55 e0             	lea    -0x20(%ebp),%edx
+ 1d3:	b8 00 00 00 00       	mov    $0x0,%eax
+ 1d8:	e8 fc ff ff ff       	call   1d9 <module_open+0x99>
+ 1dd:	31 ff                	xor    %edi,%edi
+ 1df:	8d 87 f4 00 00 00    	lea    0xf4(%edi),%eax
+ 1e5:	64 8b 0d 00 00 00 00 	mov    %fs:0x0,%ecx
+ 1ec:	8b 54 81 04          	mov    0x4(%ecx,%eax,4),%edx
+ 1f0:	8d 47 01             	lea    0x1(%edi),%eax
+ 1f3:	8d 9f f8 00 00 00    	lea    0xf8(%edi),%ebx
+ 1f9:	83 e8 01             	sub    $0x1,%eax
+ 1fc:	0f 9e c0             	setle  %al
+ 1ff:	bf 01 00 00 00       	mov    $0x1,%edi
+ 204:	89 c6                	mov    %eax,%esi
+ 206:	f7 d2                	not    %edx
+ 208:	23 54 99 14          	and    0x14(%ecx,%ebx,4),%edx
+ 20c:	89 f1                	mov    %esi,%ecx
+ 20e:	0f 94 c0             	sete   %al
+ 211:	84 c1                	test   %al,%cl
+ 213:	75 ca                	jne    1df <module_open+0x9f>
+ 215:	85 d2                	test   %edx,%edx
+ 217:	0f 84 53 ff ff ff    	je     170 <module_open+0x30>
+ 21d:	b8 00 00 00 00       	mov    $0x0,%eax
+ 222:	e8 fc ff ff ff       	call   223 <module_open+0xe3>
+ 227:	b8 fc ff ff ff       	mov    $0xfffffffc,%eax
+ 22c:	83 c4 14             	add    $0x14,%esp
+ 22f:	5b                   	pop    %ebx
+ 230:	5e                   	pop    %esi
+ 231:	5f                   	pop    %edi
+ 232:	5d                   	pop    %ebp
+ 233:	c3                   	ret    
+ 234:	c7 05 00 00 00 00 01 	movl   $0x1,0x0
+ 23b:	00 00 00 
+ 23e:	31 c0                	xor    %eax,%eax
+ 240:	83 c4 14             	add    $0x14,%esp
+ 243:	5b                   	pop    %ebx
+ 244:	5e                   	pop    %esi
+ 245:	5f                   	pop    %edi
+ 246:	5d                   	pop    %ebp
+ 247:	c3                   	ret    
+ 248:	8b 1d 00 00 00 00    	mov    0x0,%ebx
+ 24e:	b8 f5 ff ff ff       	mov    $0xfffffff5,%eax
+ 253:	85 db                	test   %ebx,%ebx
+ 255:	0f 84 f8 fe ff ff    	je     153 <module_open+0x13>
+ 25b:	eb cf                	jmp    22c <module_open+0xec>
+ 25d:	8d 76 00             	lea    0x0(%esi),%esi
+
+00000260 <module_output>:
+ 260:	55                   	push   %ebp
+ 261:	89 e5                	mov    %esp,%ebp
+ 263:	57                   	push   %edi
+ 264:	89 d7                	mov    %edx,%edi
+ 266:	56                   	push   %esi
+ 267:	89 ce                	mov    %ecx,%esi
+ 269:	53                   	push   %ebx
+ 26a:	83 c4 80             	add    $0xffffff80,%esp
+ 26d:	a1 04 00 00 00       	mov    0x4,%eax
+ 272:	85 c0                	test   %eax,%eax
+ 274:	74 22                	je     298 <module_output+0x38>
+ 276:	c7 45 80 00 00 00 00 	movl   $0x0,-0x80(%ebp)
+ 27d:	8b 45 80             	mov    -0x80(%ebp),%eax
+ 280:	c7 05 04 00 00 00 00 	movl   $0x0,0x4
+ 287:	00 00 00 
+ 28a:	83 ec 80             	sub    $0xffffff80,%esp
+ 28d:	5b                   	pop    %ebx
+ 28e:	5e                   	pop    %esi
+ 28f:	5f                   	pop    %edi
+ 290:	5d                   	pop    %ebp
+ 291:	c3                   	ret    
+ 292:	8d b6 00 00 00 00    	lea    0x0(%esi),%esi
+ 298:	8d 45 86             	lea    -0x7a(%ebp),%eax
+ 29b:	c7 44 24 08 20 00 00 	movl   $0x20,0x8(%esp)
+ 2a2:	00 
+ 2a3:	c7 44 24 04 34 00 00 	movl   $0x34,0x4(%esp)
+ 2aa:	00 
+ 2ab:	89 04 24             	mov    %eax,(%esp)
+ 2ae:	e8 fc ff ff ff       	call   2af <module_output+0x4f>
+ 2b3:	85 f6                	test   %esi,%esi
+ 2b5:	74 4c                	je     303 <module_output+0xa3>
+ 2b7:	0f b6 55 86          	movzbl -0x7a(%ebp),%edx
+ 2bb:	84 d2                	test   %dl,%dl
+ 2bd:	74 44                	je     303 <module_output+0xa3>
+ 2bf:	c7 45 80 00 00 00 00 	movl   $0x0,-0x80(%ebp)
+ 2c6:	31 c9                	xor    %ecx,%ecx
+ 2c8:	eb 0f                	jmp    2d9 <module_output+0x79>
+ 2ca:	8d b6 00 00 00 00    	lea    0x0(%esi),%esi
+ 2d0:	0f b6 54 0d 86       	movzbl -0x7a(%ebp,%ecx,1),%edx
+ 2d5:	84 d2                	test   %dl,%dl
+ 2d7:	74 15                	je     2ee <module_output+0x8e>
+ 2d9:	8d 0c 0f             	lea    (%edi,%ecx,1),%ecx
+ 2dc:	89 d0                	mov    %edx,%eax
+ 2de:	e8 fc ff ff ff       	call   2df <module_output+0x7f>
+ 2e3:	83 45 80 01          	addl   $0x1,-0x80(%ebp)
+ 2e7:	8b 4d 80             	mov    -0x80(%ebp),%ecx
+ 2ea:	39 f1                	cmp    %esi,%ecx
+ 2ec:	72 e2                	jb     2d0 <module_output+0x70>
+ 2ee:	8b 45 80             	mov    -0x80(%ebp),%eax
+ 2f1:	c7 05 04 00 00 00 01 	movl   $0x1,0x4
+ 2f8:	00 00 00 
+ 2fb:	83 ec 80             	sub    $0xffffff80,%esp
+ 2fe:	5b                   	pop    %ebx
+ 2ff:	5e                   	pop    %esi
+ 300:	5f                   	pop    %edi
+ 301:	5d                   	pop    %ebp
+ 302:	c3                   	ret    
+ 303:	c7 45 80 00 00 00 00 	movl   $0x0,-0x80(%ebp)
+ 30a:	eb e2                	jmp    2ee <module_output+0x8e>
+ 30c:	8d 74 26 00          	lea    0x0(%esi,%eiz,1),%esi
+
+00000310 <module_close>:
+ 310:	55                   	push   %ebp
+ 311:	b9 01 00 00 00       	mov    $0x1,%ecx
+ 316:	89 e5                	mov    %esp,%ebp
+ 318:	ba 03 00 00 00       	mov    $0x3,%edx
+ 31d:	83 ec 04             	sub    $0x4,%esp
+ 320:	b8 00 00 00 00       	mov    $0x0,%eax
+ 325:	c7 05 00 00 00 00 00 	movl   $0x0,0x0
+ 32c:	00 00 00 
+ 32f:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+ 336:	e8 fc ff ff ff       	call   337 <module_close+0x27>
+ 33b:	b8 00 00 00 00       	mov    $0x0,%eax
+ 340:	e8 fc ff ff ff       	call   341 <module_close+0x31>
+ 345:	31 c0                	xor    %eax,%eax
+ 347:	c9                   	leave  
+ 348:	c3                   	ret    
+ 349:	90                   	nop    
+ 34a:	90                   	nop    
+ 34b:	90                   	nop    
