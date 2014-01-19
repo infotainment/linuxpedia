@@ -7,7 +7,7 @@ ifneq (${KERNELRELEASE},)
 # Otherwise we were called directly from the command line.
 # Invoke the kernel build system.
 else
-	KERNEL_SOURCE := /usr/src/linux-headers-2.6.28-19-generic
+	KERNEL_SOURCE := /lib/modules/$(shell uname -r)/build
 	WD := $(shell pwd)
 default:
 	${MAKE} -C ${KERNEL_SOURCE} SUBDIRS=${PWD} modules

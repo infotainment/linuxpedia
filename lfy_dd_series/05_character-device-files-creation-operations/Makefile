@@ -2,7 +2,7 @@
 ifeq ($(KERNELRELEASE),)
 
 #	KERNEL_SOURCE := /usr/src/linux-headers-2.6.32-25-generic
-	KERNEL_SOURCE := /lib/modules/3.11.0-rc5/source
+	KERNEL_SOURCE := /lib/modules/$(shell uname -r)/build
 	PWD := $(shell pwd)
 default: module
 
