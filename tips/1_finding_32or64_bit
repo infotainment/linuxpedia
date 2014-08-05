@@ -1,0 +1,4 @@
+run the command "uname -m"
+
+if output is "i686" - 32 bit
+if output is "x86_64" - 64 bit
