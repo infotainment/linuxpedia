@@ -1,0 +1,22 @@
+Find a kernel function line
+
+Often in dmesg messages you have function names,for instance:
+
+[   71.030609] msm_adsp_disable() 'AUDPREPROCTASK'
+
+In order to get the line number and source file path do:
+
+# grep msm_adsp_disable System.map 
+c029ff0c t msm_adsp_disable_locked
+c029ff68 T msm_adsp_disable
+c047fe98 r __ksymtab_msm_adsp_disable
+c049030e r __kstrtab_msm_adsp_disable
+
+notice the c029ff68,we will use it with addr2line:
+
+USAGE of addr2line:
+
+# arm-none-linux-gnueabi-addr2line -f -e vmlinux c029ff68 
+msm_adsp_disable
+/home/gnutoo/embedded/htcdream/SHR/kernel/linux/sound/soc/msm/adsp.c:1033
+
