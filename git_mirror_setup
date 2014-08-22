@@ -1,0 +1,25 @@
+---------------------------------------------------------------------------------------------------------------------------
+Prototype
+
+git clone --mirror https://github.com/exampleuser/repository-to-mirror.git
+# Make a bare mirrored clone of the repository
+
+cd repository-to-mirror.git
+git remote set-url --push origin https://github.com/exampleuser/mirrored
+# Set the push location to your mirror
+
+---------------------------------------------------------------------------------------------------------------------------
+Implementation
+
+git clone --mirror http://xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.git
+# Make a bare mirrorred clone of the repository
+
+cd xxxx.git
+git remote set-url --push origin <<xxxxx<<<mirror repo patch>>>>>.git
+
+
+git fetch -p origin
+git push --mirror
+
+
+---------------------------------------------------------------------------------------------------------------------------
